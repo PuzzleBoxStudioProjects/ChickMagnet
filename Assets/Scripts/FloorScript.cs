@@ -16,6 +16,6 @@ public class FloorScript : MonoBehaviour
 	{
 		var amtToMove = levelSpeed * Time.deltaTime;
 		
-		this.transform.Translate(Vector3.back * amtToMove); 
+		this.transform.Translate(Vector3.back * amtToMove,Space.World); 
 	}
 }
