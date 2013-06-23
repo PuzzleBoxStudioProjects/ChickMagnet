@@ -13,9 +13,7 @@ public class FloorScript : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update ()
-	{
-		var amtToMove = levelSpeed * Time.deltaTime;
-		
-		this.transform.Translate(Vector3.back * amtToMove,Space.World); 
+	{		
+		this.transform.Translate(Vector3.back * levelSpeed * Time.deltaTime, Space.World); 
 	}
 }
