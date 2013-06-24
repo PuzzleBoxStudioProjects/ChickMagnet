@@ -10,13 +10,12 @@ public class PlayerScript : MonoBehaviour
 	public float playerSpeed = 10.0f;
 	public float amntToRotate = 50.0f;
 	public float colliderScale = 0.5f;
+	public float gravity = 21.0f;
 	
-	[HideInInspector]
+//	[HideInInspector]
 	public bool isGrounded;
 	[HideInInspector]
 	public bool isSliding;
-	[HideInInspector]
-	public bool isJumping;
 	
 	private float origColliderSizeY;
 	private float origColliderCenterY;
@@ -40,24 +39,40 @@ public class PlayerScript : MonoBehaviour
 	 void FixedUpdate ()
 	 {
 		ProcessMotion();
+		ApplyGravity();
+		Jump();
+		Slide();
+		
    	}
 	
 	void ProcessMotion()
 	{
 		float dir = Input.GetAxisRaw("Horizontal");
 		
+		//move left right
+		this.transform.Translate(Vector3.right * dir * playerSpeed * Time.deltaTime);
+		
+		if (dir != 0)
+		{
+			isSliding = false;
+		}
+	}
+	
+	void Jump()
+	{
 		//jump
 		if(Input.GetKey(KeyCode.UpArrow) && isGrounded)
 		{
 			rigidbody.AddForce(Vector3.up * jumpForce * Time.fixedDeltaTime, ForceMode.VelocityChange);
-//			this.transform.Translate(Vector3.up * jumpForce * Time.deltaTime);
-			isJumping = true;
+			
+			isSliding = false;
 			isGrounded = false;
+			
 		}
-		
-		//move left right
-		this.transform.Translate(Vector3.right * dir * playerSpeed * Time.deltaTime);
-		
+	}
+	
+	void Slide()
+	{
 		//get box collider
 		BoxCollider boxCol = (BoxCollider)collider;
 		
@@ -82,7 +97,7 @@ public class PlayerScript : MonoBehaviour
 			isSliding = true;
 	  	}
 		
-		if (!isSliding || isJumping)
+		if (!isSliding)
 		{
 			//reset size and center point
 			boxSize.y = origColliderSizeY;
@@ -100,6 +115,18 @@ public class PlayerScript : MonoBehaviour
 		isSliding = false;
 	}
 	
+	void ApplyGravity()
+	{
+		Vector3 vel = rigidbody.velocity;
+		
+		if (!isGrounded)
+		{
+			vel.y -= gravity * Time.deltaTime;
+		}
+		rigidbody.velocity = vel;
+	}
+	
+	//check for grounded
 	void OnCollisionEnter(Collision col)
 	{
 		//get first contact point
@@ -111,7 +138,6 @@ public class PlayerScript : MonoBehaviour
 		//any number below 180 to check for ground
 		if (checkBelow > 60)
 		{
-			isJumping = false;
 			isGrounded = true;
 		}
 	}
