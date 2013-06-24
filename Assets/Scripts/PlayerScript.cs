@@ -10,9 +10,8 @@ public class PlayerScript : MonoBehaviour
 	public float playerSpeed = 10.0f;
 	public float amntToRotate = 50.0f;
 	public float colliderScale = 0.5f;
-	public float gravity = 21.0f;
 	
-//	[HideInInspector]
+	[HideInInspector]
 	public bool isGrounded;
 	[HideInInspector]
 	public bool isSliding;
@@ -39,7 +38,7 @@ public class PlayerScript : MonoBehaviour
 	 void FixedUpdate ()
 	 {
 		ProcessMotion();
-		ApplyGravity();
+//		ApplyGravity();
 		Jump();
 		Slide();
 		
@@ -51,11 +50,6 @@ public class PlayerScript : MonoBehaviour
 		
 		//move left right
 		this.transform.Translate(Vector3.right * dir * playerSpeed * Time.deltaTime);
-		
-		if (dir != 0)
-		{
-			isSliding = false;
-		}
 	}
 	
 	void Jump()
@@ -65,9 +59,8 @@ public class PlayerScript : MonoBehaviour
 		{
 			rigidbody.AddForce(Vector3.up * jumpForce * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			
+			//cancel sliding
 			isSliding = false;
-			isGrounded = false;
-			
 		}
 	}
 	
@@ -115,19 +108,8 @@ public class PlayerScript : MonoBehaviour
 		isSliding = false;
 	}
 	
-	void ApplyGravity()
-	{
-		Vector3 vel = rigidbody.velocity;
-		
-		if (!isGrounded)
-		{
-			vel.y -= gravity * Time.deltaTime;
-		}
-		rigidbody.velocity = vel;
-	}
-	
 	//check for grounded
-	void OnCollisionEnter(Collision col)
+	void OnCollisionStay(Collision col)
 	{
 		//get first contact point
 		ContactPoint contact = col.contacts[0];
@@ -140,5 +122,10 @@ public class PlayerScript : MonoBehaviour
 		{
 			isGrounded = true;
 		}
+	}
+	
+	void OnCollisionExit()
+	{
+		isGrounded = false;
 	}
 }
