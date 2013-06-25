@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-public class PlayerScript : MonoBehaviour
+public class PlayerPhysics : MonoBehaviour
 {
-	public static PlayerScript instance;
+	public static PlayerPhysics instance;
 	
 	public float jumpForce = 10.0f;
 	
@@ -16,6 +16,8 @@ public class PlayerScript : MonoBehaviour
 	[HideInInspector]
 	public bool isSliding;
 	
+	private PlayerMotor playerMotor;
+	
 	private float origColliderSizeY;
 	private float origColliderCenterY;
 	
@@ -24,47 +26,44 @@ public class PlayerScript : MonoBehaviour
 		instance = this;
 	}
 	
-	 // Use this for initialization
-	 void Start ()
-	 {
+	// Use this for initialization
+	void Start ()
+	{
 	 	this.rigidbody.freezeRotation = true;
+		
+		playerMotor = GetComponent<PlayerMotor>();
 		
 		//log box collider's original size and center point
 		origColliderSizeY = ((BoxCollider)collider).size.y;
 		origColliderCenterY = ((BoxCollider)collider).center.y;
-	 }
+	}
  
-	 // Update is called once per frame
-	 void FixedUpdate ()
-	 {
-		ProcessMotion();
-//		ApplyGravity();
-		Jump();
-		Slide();
-		
-   	}
-	
-	void ProcessMotion()
+	// Update is called once per frame
+	void Update ()
 	{
-		float dir = Input.GetAxisRaw("Horizontal");
+		ResetSlide();
 		
+		if (GameState.instance.state == GameState.gameStates.caught)
+		{
+			playerMotor.RemoveControl();
+		}
+	}
+	
+	public void ProcessMotion(float dir)
+	{
 		//move left right
 		this.transform.Translate(Vector3.right * dir * playerSpeed * Time.deltaTime);
 	}
 	
-	void Jump()
+	public void Jump()
 	{
-		//jump
-		if(Input.GetKey(KeyCode.UpArrow) && isGrounded)
-		{
-			rigidbody.AddForce(Vector3.up * jumpForce * Time.fixedDeltaTime, ForceMode.VelocityChange);
+		rigidbody.AddForce(Vector3.up * jumpForce * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			
-			//cancel sliding
-			isSliding = false;
-		}
+		//cancel sliding
+		isSliding = false;
 	}
 	
-	void Slide()
+	public void Slide()
 	{
 		//get box collider
 		BoxCollider boxCol = (BoxCollider)collider;
@@ -73,22 +72,30 @@ public class PlayerScript : MonoBehaviour
 		Vector3 boxCenter = boxCol.center;
 		Vector3 boxSize = boxCol.size;
 		
-		//slide
-		if(Input.GetKey(KeyCode.DownArrow) && isGrounded)
-		{
-			//scale the size to colliderScale value
-			boxSize.y = origColliderSizeY * colliderScale;
-			//set the center point so the pivot point stays in its original position
-			boxCenter.y = origColliderCenterY - (origColliderSizeY * (1 - colliderScale)) * 0.5f;
-			
-			boxCol.size = boxSize;
-			boxCol.center = boxCenter;
-			
-			//wait a time before resetting size
-			StartCoroutine("WaitAndSlide", 2);
-			
-			isSliding = true;
-	  	}
+		//scale the size to colliderScale value
+		boxSize.y = origColliderSizeY * colliderScale;
+		//set the center point so the pivot point stays in its original position
+		boxCenter.y = origColliderCenterY - (origColliderSizeY * (1 - colliderScale)) * 0.5f;
+		
+		boxCol.size = boxSize;
+		boxCol.center = boxCenter;
+		
+		//wait a time before resetting size
+		StartCoroutine("WaitAndSlide", 2);
+		
+		isSliding = true;
+		
+	
+	}
+	
+	void ResetSlide()
+	{
+		//get box collider
+		BoxCollider boxCol = (BoxCollider)collider;
+		
+		//get box collider's center point and size
+		Vector3 boxCenter = boxCol.center;
+		Vector3 boxSize = boxCol.size;
 		
 		if (!isSliding)
 		{

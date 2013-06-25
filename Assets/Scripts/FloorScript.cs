@@ -38,7 +38,8 @@ public class FloorScript : MonoBehaviour
 			//reset game state
 			else if (currentSpeed >= normLevelSpeed)
 			{
-				GameState.instance.state = GameState.gameStates.safe;
+//				GameState.instance.state = GameState.gameStates.safe;
+				GameState.instance.hazardHitCnt = 0;
 			}
 		}
 	}

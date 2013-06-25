@@ -5,6 +5,8 @@ public class GameState : MonoBehaviour
 {
 	public static GameState instance;
 	
+	public int hazardHitCnt = 0;
+	
 	//list of game states
 	public enum gameStates
 	{
@@ -16,7 +18,6 @@ public class GameState : MonoBehaviour
 	//getter setter for game states
 	public gameStates state { get; set; }
 	
-	// Use this for initialization
 	void Awake ()
 	{
 		instance = this;
@@ -25,18 +26,22 @@ public class GameState : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		//representing each time player collides with a hazard
 		if (Input.GetKeyDown(KeyCode.T))
 		{
+			hazardHitCnt++;
+		}
+		switch(hazardHitCnt)
+		{
+		case 0:
 			state = gameStates.safe;
-		}
-		//player hit something to stumble
-		if (Input.GetKeyDown(KeyCode.Y))
-		{
+			break;
+		case 1:
 			state = gameStates.stumble;
-		}
-		if (Input.GetKeyDown(KeyCode.U))
-		{
+			break;
+		case 2:
 			state = gameStates.caught;
+			break;
 		}
 	}
 }
