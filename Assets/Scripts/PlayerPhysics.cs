@@ -21,6 +21,8 @@ public class PlayerPhysics : MonoBehaviour
 	private float origColliderSizeY;
 	private float origColliderCenterY;
 	
+	private Vector3 moveVector;
+	
 	void Awake()
 	{
 		instance = this;
@@ -52,7 +54,8 @@ public class PlayerPhysics : MonoBehaviour
 	public void ProcessMotion(float dir)
 	{
 		//move left right
-		this.transform.Translate(Vector3.right * dir * playerSpeed * Time.deltaTime);
+		moveVector = new Vector3(dir * playerSpeed, rigidbody.velocity.y, 0);
+		rigidbody.velocity = moveVector;
 	}
 	
 	public void Jump()
