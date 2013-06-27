@@ -46,6 +46,7 @@ public class GameState : MonoBehaviour
 			//check if high score was surpassed
 			if (distanceTraveled > highScore)
 			{
+				//set new high score
 				highScore = distanceTraveled;
 				
 				//round high score to first decimal point

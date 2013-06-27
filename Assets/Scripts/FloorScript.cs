@@ -5,9 +5,11 @@ public class FloorScript : MonoBehaviour
 {
 	public float normLevelSpeed = 8.0f;
 	public float stumbleLevelSpeed = 3.0f;
-	public float currentSpeed;
+	public float accel = 3.0f;
 	
-	public GameState.gameStates currentState;
+	private float currentSpeed;
+
+	private GameState.gameStates currentState;
 	
 	// Use this for initialization
 	void Start ()
@@ -33,12 +35,11 @@ public class FloorScript : MonoBehaviour
 			//increase current speed
 			if (currentSpeed < normLevelSpeed)
 			{
-				currentSpeed += normLevelSpeed * Time.deltaTime;
+				currentSpeed += accel * Time.deltaTime;
 			}
 			//reset game state
 			else if (currentSpeed >= normLevelSpeed)
 			{
-//				GameState.instance.state = GameState.gameStates.safe;
 				GameState.instance.hazardHitCnt = 0;
 			}
 		}

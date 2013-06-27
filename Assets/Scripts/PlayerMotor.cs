@@ -29,7 +29,7 @@ public class PlayerMotor : MonoBehaviour
 				playerPhysics.Jump();
 			}
 			//slide
-			if(Input.GetKey(KeyCode.DownArrow) && playerPhysics.isGrounded)
+			if(Input.GetKeyDown(KeyCode.DownArrow))
 			{
 				playerPhysics.Slide();
 			}
