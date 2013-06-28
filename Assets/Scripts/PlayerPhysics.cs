@@ -13,7 +13,7 @@ public class PlayerPhysics : MonoBehaviour
 	
 	public float colliderScale = 0.5f;
 	
-	[HideInInspector]
+    //[HideInInspector]
 	public bool isGrounded;
 	[HideInInspector]
 	public bool isSliding;
@@ -24,10 +24,13 @@ public class PlayerPhysics : MonoBehaviour
 	private float origColliderCenterY;
 	
 	public float vertVel;
-	
+    public float distBelowFeet = 0.8f;
 	public bool hasHitHazard = false;
 	
 	private Vector3 moveVector;
+
+    //private float characterHeight;
+    //private float characterWidth;
 
 	void Awake()
 	{
@@ -53,13 +56,19 @@ public class PlayerPhysics : MonoBehaviour
 		
 		if (GameState.instance.state == GameState.gameStates.caught)
 		{
-			playerMotor.RemoveControl();
+            playerMotor.RemoveControl();
 		}
-		
+        
+        CheckGround();
 		HazardControl();		
 		ApplyGravity();
 	}
-	
+
+    void FixedUpdate()
+    {
+        
+    }
+
 	public void ProcessMotion(float dir)
 	{
 		//move left right
@@ -71,7 +80,7 @@ public class PlayerPhysics : MonoBehaviour
 	{
 		//apply jump force
 		vertVel = jumpForce * Time.fixedDeltaTime;
-		
+
 		//cancel sliding
 		isSliding = false;
 	}
@@ -152,26 +161,24 @@ public class PlayerPhysics : MonoBehaviour
 			vertVel = -1;
 		}
 	}
-	
-	//check for grounded
-	void OnCollisionStay(Collision col)
-	{
-		//get first contact point
-		ContactPoint contact = col.contacts[0];
-		
-		//get the angle below
-		float checkBelow = Vector3.Angle(contact.normal, -transform.up);
-		
-		//any number between 180 and 90 to check for ground
-		if (checkBelow > 100)
-		{
-			isGrounded = true;
-		}
-		else
-		{
-			isGrounded = false;
-		}
-	}
+
+    void CheckGround()
+    {
+        RaycastHit hitInfo;
+
+        float radiusCheck = collider.bounds.extents.y;
+        
+        Vector3 dir = Vector3.down;
+
+        if (Physics.SphereCast(transform.position, radiusCheck / 2, dir, out hitInfo, distBelowFeet))
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+    }
 	
 	void OnCollisionEnter(Collision col)
 	{
@@ -188,10 +195,5 @@ public class PlayerPhysics : MonoBehaviour
 		{
 			hasHitHazard = true;
 		}
-	}
-	
-	void OnCollisionExit()
-	{
-		isGrounded = false;
 	}
 }
