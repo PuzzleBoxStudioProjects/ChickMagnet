@@ -33,7 +33,7 @@ public class PlayerMotor : MonoBehaviour
 			{
 				playerPhysics.Slide();
 			}
-			playerPhysics.ProcessMotion(Input.GetAxisRaw("Horizontal"));
+			playerPhysics.GetInput(Input.GetAxisRaw("Horizontal"));
 		}
 	}
 }

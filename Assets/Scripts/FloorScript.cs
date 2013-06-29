@@ -4,7 +4,6 @@ using System.Collections;
 public class FloorScript : MonoBehaviour
 {
     public static FloorScript instance;
-	public static float distanceTraveled;
 
 	public float normLevelSpeed = 8.0f;
 	public float stumbleLevelSpeed = 3.0f;
@@ -14,7 +13,7 @@ public class FloorScript : MonoBehaviour
 
     public static Transform levelParent;
 
-	private GameState.gameStates currentState;
+	public GameState.gameStates currentState;
 
     void Awake()
     {
@@ -32,7 +31,6 @@ public class FloorScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-        //distanceTraveled += this.transform.position.z * Time.deltaTime;
 		if (this.currentState != GameState.instance.state)
 		{
 			currentSpeed = MoveSpeed();
@@ -41,20 +39,20 @@ public class FloorScript : MonoBehaviour
 		
 		//move level
 		this.transform.Translate(Vector3.back * currentSpeed * Time.deltaTime, Space.World);
-		
-		if (this.currentState != GameState.gameStates.caught)
-		{
-			//increase current speed
-			if (currentSpeed < normLevelSpeed)
-			{
-				currentSpeed += accel * Time.deltaTime;
-			}
-			//reset game state
-			else if (currentSpeed >= normLevelSpeed)
-			{
-				GameState.instance.hazardHitCnt = 0;
-			}
-		}
+
+        if (GameState.instance.state != GameState.gameStates.caught)
+        {
+            //increase current speed
+            if (currentSpeed < normLevelSpeed)
+            {
+                currentSpeed += accel * Time.deltaTime;
+            }
+            //reset game state
+            else if (currentSpeed >= normLevelSpeed)
+            {
+                GameState.instance.hazardHitCnt = 0;
+            }
+        }
 	}
 	
 	float MoveSpeed()

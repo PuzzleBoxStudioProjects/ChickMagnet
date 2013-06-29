@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class GameState : MonoBehaviour
 {
 	public static GameState instance;
-	public static float distanceTraveled = 0.0f;
+	public float distanceTraveled = 0.0f;
 	
 	public int hazardHitCnt = 0;
 	public float highScore = 0;
@@ -55,8 +55,9 @@ public class GameState : MonoBehaviour
 				PlayerPrefs.SetFloat("Highscore", highScore);
 			}
 		}
-		
+
 		SetGameStates();
+        //print(state);
 	}
 	
 	void SetGameStates()

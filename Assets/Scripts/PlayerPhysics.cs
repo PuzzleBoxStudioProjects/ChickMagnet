@@ -25,12 +25,10 @@ public class PlayerPhysics : MonoBehaviour
 	
 	public float vertVel;
     public float distBelowFeet = 0.8f;
-	public bool hasHitHazard = false;
+
+	private bool hasHitHazard = false;
 	
 	private Vector3 moveVector;
-
-    //private float characterHeight;
-    //private float characterWidth;
 
 	void Awake()
 	{
@@ -54,23 +52,33 @@ public class PlayerPhysics : MonoBehaviour
 	{
 		ResetSlide();
 		
+        //game is lost
 		if (GameState.instance.state == GameState.gameStates.caught)
 		{
+            //stop moving
+            moveVector.x = 0;
+            //take control from player
             playerMotor.RemoveControl();
 		}
         
         CheckGround();
-		HazardControl();		
+		HazardControl();
+        ProcessMotion();
 		ApplyGravity();
 	}
 
-	public void ProcessMotion(float dir)
+	void ProcessMotion()
 	{
 		//move left right
-		moveVector = new Vector3(dir * playerSpeed, vertVel, 0);
+		moveVector = new Vector3(moveVector.x, vertVel, 0);
 		rigidbody.velocity = moveVector;
 	}
-	
+
+    public void GetInput(float dir)
+    {
+        moveVector.x = playerSpeed * dir;
+    }
+
 	public void Jump()
 	{
 		//apply jump force
@@ -98,6 +106,7 @@ public class PlayerPhysics : MonoBehaviour
 		boxCol.size = boxSize;
 		boxCol.center = boxCenter;
 		
+        //quickly put the player down to the ground
 		if (!isGrounded)
 		{
 			vertVel = -fallFromSlideForce;
@@ -138,6 +147,7 @@ public class PlayerPhysics : MonoBehaviour
 	
 	void HazardControl()
 	{
+        //hit a hazard so add one
 		if (hasHitHazard)
 		{
 			GameState.instance.hazardHitCnt++;
@@ -147,10 +157,12 @@ public class PlayerPhysics : MonoBehaviour
 	
 	void ApplyGravity()
 	{
+        //apply gravity
 		if (!isGrounded && !isSliding)
 		{
 			vertVel -= gravity * Time.deltaTime;
 		}
+        //apply a small downward force to stay grounded
 		if (isGrounded)
 		{
 			vertVel = -1;
@@ -165,10 +177,12 @@ public class PlayerPhysics : MonoBehaviour
         
         Vector3 dir = Vector3.down;
 
+        //hitting something below
         if (Physics.SphereCast(transform.position, radiusCheck / 2, dir, out hitInfo, distBelowFeet))
         {
             isGrounded = true;
         }
+            //not hitting something below
         else
         {
             isGrounded = false;
@@ -179,26 +193,27 @@ public class PlayerPhysics : MonoBehaviour
 	{
 		ContactPoint contact = col.contacts[0];
 		
+        //check sides
 		float checkRight = Vector3.Angle(contact.normal, transform.right);
 		float checkLeft = Vector3.Angle(contact.normal, -transform.right);
 
+        //check in front of player
         float checkFront = Vector3.Angle(contact.normal, transform.forward);
 
-		if (checkRight > 100)
+        //has hit left or right side
+		if (checkRight > 100 || checkLeft > 100)
 		{
 			hasHitHazard = true;
 		}
-		if (checkLeft > 100)
-		{
-			hasHitHazard = true;
-		}
+        //has hit in front
         if (checkFront > 100)
         {
             hasHitHazard = true;
 
-            if (col.transform.tag == "Vehicle")
+            //instant kill
+            if (col.transform.tag == "Instakill")
             {
-                GameState.instance.state = GameState.gameStates.caught;
+                GameState.instance.hazardHitCnt = 2;
             }
         }
 	}
