@@ -35,7 +35,7 @@ public class LevelGeneration : MonoBehaviour {
 			road.parent = thisprefab;
             
 			road.position = new Vector3(nextPosition.x,nextPosition.y,nextPosition.z);
-			nextPosition.z += 10;
+			nextPosition.z += 30;
 			objectQueue.Enqueue(road);
 	}
 }
