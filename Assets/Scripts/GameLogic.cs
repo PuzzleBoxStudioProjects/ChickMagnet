@@ -15,14 +15,14 @@ public class GameLogic : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if (GameState.instance.state != GameState.gameStates.caught)
-		{
-			distanceTraveled += Time.deltaTime;
-		}
+        //if (GameState.instance.state != GameState.gameStates.caught)
+        //{
+        //    distanceTraveled += Time.deltaTime;
+        //}
 	}
 	
 	void OnGUI()
 	{
-		GUI.Label(new Rect(0, 0, 500, 20), "Distance Traveled " + distanceTraveled.ToString("f1"));
+        //GUI.Label(new Rect(0, 0, 500, 20), "Distance Traveled " + distanceTraveled.ToString("f1"));
 	}
 }

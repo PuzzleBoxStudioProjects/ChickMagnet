@@ -33,8 +33,9 @@ public class LevelGeneration : MonoBehaviour {
 	private void Recycle(){
 			Transform road = objectQueue.Dequeue();
 			road.parent = thisprefab;
+            
 			road.position = new Vector3(nextPosition.x,nextPosition.y,nextPosition.z);
-			nextPosition.z += road.localScale.z;
+			nextPosition.z += 10;
 			objectQueue.Enqueue(road);
 	}
 }

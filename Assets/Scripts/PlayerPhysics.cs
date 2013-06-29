@@ -64,11 +64,6 @@ public class PlayerPhysics : MonoBehaviour
 		ApplyGravity();
 	}
 
-    void FixedUpdate()
-    {
-        
-    }
-
 	public void ProcessMotion(float dir)
 	{
 		//move left right
@@ -186,7 +181,9 @@ public class PlayerPhysics : MonoBehaviour
 		
 		float checkRight = Vector3.Angle(contact.normal, transform.right);
 		float checkLeft = Vector3.Angle(contact.normal, -transform.right);
-		
+
+        float checkFront = Vector3.Angle(contact.normal, transform.forward);
+
 		if (checkRight > 100)
 		{
 			hasHitHazard = true;
@@ -195,5 +192,14 @@ public class PlayerPhysics : MonoBehaviour
 		{
 			hasHitHazard = true;
 		}
+        if (checkFront > 100)
+        {
+            hasHitHazard = true;
+
+            if (col.transform.tag == "Vehicle")
+            {
+                GameState.instance.state = GameState.gameStates.caught;
+            }
+        }
 	}
 }

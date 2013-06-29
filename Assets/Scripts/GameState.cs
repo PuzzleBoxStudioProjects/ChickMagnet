@@ -37,7 +37,7 @@ public class GameState : MonoBehaviour
 	{
 		//we are still in the game
 		if (state != gameStates.caught)
-		{
+		{ 
 			distanceTraveled += Time.deltaTime;
 		}
 		//we lost the game so do these things
@@ -56,11 +56,6 @@ public class GameState : MonoBehaviour
 			}
 		}
 		
-		//representing each time player collides with a hazard
-		if (Input.GetKeyDown(KeyCode.T))
-		{
-			hazardHitCnt++;
-		}
 		SetGameStates();
 	}
 	
