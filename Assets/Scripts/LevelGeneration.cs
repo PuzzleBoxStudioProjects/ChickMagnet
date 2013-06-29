@@ -10,13 +10,12 @@ public class LevelGeneration : MonoBehaviour {
 	private Vector3 nextPosition;
 	private Queue<Transform> objectQueue;
 	// Use this for initialization
-	void Start () {
+	void Awake() {
 		objectQueue = new Queue<Transform>(numOfobjects);
-		nextPosition = transform.localPosition;
 		for(int i = 0; i < numOfobjects; i++){
 			objectQueue.Enqueue((Transform)Instantiate(prefab));
 		}
-		nextPosition = transform.localPosition;
+		nextPosition = transform.localPosition * .5f;
 		for(int i = 0; i < numOfobjects; i++){
 			Recycle();
 		}
@@ -24,18 +23,15 @@ public class LevelGeneration : MonoBehaviour {
 	
 	// Update is called once per frame
 	public void Update () {
-		 distanceCheck = objectQueue.Peek().localPosition.z + recycleOffset;
-		if(objectQueue.Peek().localPosition.z + recycleOffset < -5){
-			distanceCheck = 0;
+		if(objectQueue.Peek().localPosition.z + recycleOffset < 0){
 			Recycle ();
 		}
 	}
 	private void Recycle(){
-			Transform road = objectQueue.Dequeue();
-			road.parent = thisprefab;
-            
-			road.position = new Vector3(nextPosition.x,nextPosition.y,nextPosition.z);
-			nextPosition.z += 30;
-			objectQueue.Enqueue(road);
+		Transform road = objectQueue.Dequeue();
+		road.parent = thisprefab;
+		road.localPosition = nextPosition ;
+		nextPosition.z += road.localScale.z;		
+		objectQueue.Enqueue(road);
 	}
 }
