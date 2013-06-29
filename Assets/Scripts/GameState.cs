@@ -1,16 +1,16 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 [ExecuteInEditMode]
 public class GameState : MonoBehaviour
 {
 	public static GameState instance;
+	public static float distanceTraveled = 0.0f;
 	
 	public int hazardHitCnt = 0;
-	
-	public float distanceTraveled = 0.0f;
 	public float highScore = 0;
-	
+	public Transform levelPrefab;
+	public GUISkin thisSkin;
 	//list of game states
 	public enum gameStates
 	{
@@ -83,6 +83,7 @@ public class GameState : MonoBehaviour
 	
 	void OnGUI()
 	{
+		GUI.skin = thisSkin;
 		GUI.Label(new Rect(0, 30, 500, 20), "High score " + PlayerPrefs.GetFloat("Highscore"));
 		GUI.Label(new Rect(0, 0, 500, 20), "Distance Traveled " + distanceTraveled.ToString("f1"));
 	}

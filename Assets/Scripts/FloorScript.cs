@@ -3,6 +3,7 @@ using System.Collections;
 
 public class FloorScript : MonoBehaviour
 {
+	public static float distanceTraveled;
 	public float normLevelSpeed = 8.0f;
 	public float stumbleLevelSpeed = 3.0f;
 	public float accel = 3.0f;
@@ -21,6 +22,7 @@ public class FloorScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		distanceTraveled += this.transform.position.z * Time.deltaTime;
 		if (this.currentState != GameState.instance.state)
 		{
 			currentSpeed = MoveSpeed();

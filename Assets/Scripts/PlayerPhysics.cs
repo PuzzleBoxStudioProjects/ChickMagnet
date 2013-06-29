@@ -10,7 +10,7 @@ public class PlayerPhysics : MonoBehaviour
 	public float playerSpeed = 10.0f;
 	public float amntToRotate = 50.0f;
 	public float fallFromSlideForce = 20.0f;
-	
+
 	public float colliderScale = 0.5f;
 	
     //[HideInInspector]
