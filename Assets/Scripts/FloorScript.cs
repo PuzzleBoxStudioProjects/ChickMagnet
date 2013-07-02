@@ -8,7 +8,10 @@ public class FloorScript : MonoBehaviour
 	public float normLevelSpeed = 8.0f;
 	public float stumbleLevelSpeed = 3.0f;
 	public float accel = 3.0f;
-	
+
+    public float distTraveled;
+    public float lastPosit;
+
 	private float currentSpeed;
 
     public static Transform levelParent;
@@ -31,6 +34,9 @@ public class FloorScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+        lastPosit = this.transform.position.z;
+        distTraveled = lastPosit - this.transform.position.z;
+
 		if (this.currentState != GameState.instance.state)
 		{
 			currentSpeed = MoveSpeed();

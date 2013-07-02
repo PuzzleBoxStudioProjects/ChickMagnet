@@ -21,16 +21,17 @@ public class DrewLevelGen : MonoBehaviour
         {
             objectQueue.Enqueue((Transform)Instantiate(prefab));
         }
-        nextPosition.z = transform.localPosition.z * .5f;
-        //for(int i = 0; i < numOfobjects; i++){
-        //	Recycle();
-        //}
+        nextPosition.z = transform.localPosition.z;
+        for (int i = 0; i < numOfobjects; i++)
+        {
+            Recycle();
+        }
     }
 
     // Update is called once per frame
     public void Update()
     {
-        if (objectQueue.Peek().localPosition.z < -5)
+        if (objectQueue.Peek().localPosition.z + recycleOffset < FloorScript.instance.distTraveled)
         {
             Recycle();
         }
@@ -39,8 +40,9 @@ public class DrewLevelGen : MonoBehaviour
     {
         Transform road = objectQueue.Dequeue();
         road.parent = thisprefab;
-        road.localPosition += nextPosition;
-        nextPosition.z += road.localScale.z * .5f;
+        road.localPosition = nextPosition;
+        nextPosition.z += road.localScale.z;
+        
         objectQueue.Enqueue(road);
     }
 }
