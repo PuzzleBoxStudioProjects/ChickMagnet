@@ -4,16 +4,18 @@ using System.Collections;
 public class PlayerPhysics : MonoBehaviour
 {
 	public static PlayerPhysics instance;
-	
+
+    public static float distTraveled;
+
 	public float jumpForce = 10.0f;
 	public float gravity = 28.0f;
-	public float playerSpeed = 10.0f;
+    public float playerSpeed = 10.0f;
 	public float amntToRotate = 50.0f;
 	public float fallFromSlideForce = 20.0f;
 
 	public float colliderScale = 0.5f;
-	
-    //[HideInInspector]
+
+    [HideInInspector]
 	public bool isGrounded;
 	[HideInInspector]
 	public bool isSliding;
@@ -26,9 +28,17 @@ public class PlayerPhysics : MonoBehaviour
 	public float vertVel;
     public float distBelowFeet = 0.8f;
 
-	private bool hasHitHazard = false;
+    public float normLevelSpeed = 10.0f;
+    public float stumbleLevelSpeed = 3.0f;
+    public float accel = 3.0f;
+
+	public bool hasHitHazard = false;
 	
 	private Vector3 moveVector;
+
+    public float currentSpeed;
+
+    public GameState.gameStates currentState;
 
 	void Awake()
 	{
@@ -45,6 +55,9 @@ public class PlayerPhysics : MonoBehaviour
 		//log box collider's original size and center point
 		origColliderSizeY = ((BoxCollider)collider).size.y;
 		origColliderCenterY = ((BoxCollider)collider).center.y;
+
+        this.currentState = GameState.instance.state;
+        currentSpeed = MoveSpeed();
 	}
  
 	// Update is called once per frame
@@ -65,12 +78,38 @@ public class PlayerPhysics : MonoBehaviour
 		HazardControl();
         ProcessMotion();
 		ApplyGravity();
+        SpeedControl();
 	}
+
+    void SpeedControl()
+    {
+        distTraveled = transform.localPosition.z;
+
+        if (this.currentState != GameState.instance.state)
+        {
+            currentSpeed = MoveSpeed();
+            this.currentState = GameState.instance.state;
+        }
+
+        if (GameState.instance.state != GameState.gameStates.caught)
+        {
+            //increase current speed
+            if (currentSpeed < normLevelSpeed)
+            {
+                currentSpeed += accel * Time.deltaTime;
+            }
+            //reset game state
+            else if (currentSpeed > normLevelSpeed)
+            {
+                GameState.instance.hazardHitCnt = 0;
+            }
+        }
+    }
 
 	void ProcessMotion()
 	{
 		//move left right
-		moveVector = new Vector3(moveVector.x, vertVel, 0);
+		moveVector = new Vector3(moveVector.x, vertVel, currentSpeed);
 		rigidbody.velocity = moveVector;
 	}
 
@@ -144,14 +183,34 @@ public class PlayerPhysics : MonoBehaviour
 		yield return new WaitForSeconds(waitTime);
 		isSliding = false;
 	}
-	
+
+    float MoveSpeed()
+    {
+        float levelSpeed = 0.0f;
+
+        //set level speeds
+        switch (GameState.instance.state)
+        {
+            case GameState.gameStates.safe:
+                levelSpeed = normLevelSpeed;
+                break;
+            case GameState.gameStates.stumble:
+                levelSpeed = stumbleLevelSpeed;
+                break;
+            case GameState.gameStates.caught:
+                levelSpeed = 0;
+                break;
+        }
+        return levelSpeed;
+    }
+
 	void HazardControl()
 	{
         //hit a hazard so add one
 		if (hasHitHazard)
 		{
 			GameState.instance.hazardHitCnt++;
-			hasHitHazard = false;
+            hasHitHazard = false;
 		}
 	}
 	
@@ -196,24 +255,34 @@ public class PlayerPhysics : MonoBehaviour
         //check sides
 		float checkRight = Vector3.Angle(contact.normal, transform.right);
 		float checkLeft = Vector3.Angle(contact.normal, -transform.right);
-
+        
         //check in front of player
         float checkFront = Vector3.Angle(contact.normal, transform.forward);
 
         //has hit left or right side
 		if (checkRight > 100 || checkLeft > 100)
 		{
-			hasHitHazard = true;
+            if (col.transform.tag == "Wall")
+            {
+                //instant kill
+                GameState.instance.hazardHitCnt = 2;
+            }
+            else
+            {
+                hasHitHazard = true;
+            }
 		}
         //has hit in front
         if (checkFront > 100)
         {
-            hasHitHazard = true;
-
             //instant kill
             if (col.transform.tag == "Instakill")
             {
                 GameState.instance.hazardHitCnt = 2;
+            }
+            else
+            {
+                hasHitHazard = true;
             }
         }
 	}

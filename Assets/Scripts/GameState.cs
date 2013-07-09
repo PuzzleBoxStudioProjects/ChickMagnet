@@ -35,31 +35,39 @@ public class GameState : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		//we are still in the game
-		if (state != gameStates.caught)
-		{ 
-			distanceTraveled += Time.deltaTime;
-		}
-		//we lost the game so do these things
-		else
-		{
-			//check if high score was surpassed
-			if (distanceTraveled > highScore)
-			{
-				//set new high score
-				highScore = distanceTraveled;
-				
-				//round high score to first decimal point
-				highScore = Mathf.Round(highScore * 10.0f) / 10.0f;
-				//save score
-				PlayerPrefs.SetFloat("Highscore", highScore);
-			}
-		}
-
+        //TEMPORARY
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            PlayerPrefs.DeleteKey("Highscore");
+        }
+        ScoreControl();
 		SetGameStates();
-        //print(state);
 	}
-	
+
+    void ScoreControl()
+    {
+        //we are still in the game
+        if (state != gameStates.caught)
+        {
+            distanceTraveled += Time.deltaTime;
+        }
+        //we lost the game so do these things
+        else
+        {
+            //check if high score was surpassed
+            if (distanceTraveled > highScore)
+            {
+                //set new high score
+                highScore = distanceTraveled;
+
+                //round high score to first decimal point
+                highScore = Mathf.Round(highScore * 10.0f) / 10.0f;
+                //save score
+                PlayerPrefs.SetFloat("Highscore", highScore);
+            }
+        }
+    }
+
 	void SetGameStates()
 	{
 		//set game states that occur when colliding with a hazard

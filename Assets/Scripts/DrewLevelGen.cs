@@ -21,7 +21,7 @@ public class DrewLevelGen : MonoBehaviour
         {
             objectQueue.Enqueue((Transform)Instantiate(prefab));
         }
-        nextPosition.z = transform.localPosition.z;
+        nextPosition = transform.localPosition;
         for (int i = 0; i < numOfobjects; i++)
         {
             Recycle();
@@ -31,7 +31,7 @@ public class DrewLevelGen : MonoBehaviour
     // Update is called once per frame
     public void Update()
     {
-        if (objectQueue.Peek().localPosition.z + recycleOffset < FloorScript.instance.distTraveled)
+        if (objectQueue.Peek().localPosition.z + recycleOffset < PlayerPhysics.distTraveled)
         {
             Recycle();
         }
