@@ -21,7 +21,7 @@ public class LevelGeneration : MonoBehaviour
         {
             objectQueue.Enqueue((Transform)Instantiate(prefab));
         }
-        nextPosition = transform.localPosition;
+        nextPosition.z = transform.localPosition.z +36;
         for (int i = 0; i < numOfobjects; i++)
         {
             Recycle();
@@ -41,7 +41,7 @@ public class LevelGeneration : MonoBehaviour
         Transform road = objectQueue.Dequeue();
         road.parent = thisprefab;
         road.localPosition = nextPosition;
-        nextPosition.z += road.localScale.z;
+        nextPosition.z += road.localScale.z + 36;
         
         objectQueue.Enqueue(road);
     }

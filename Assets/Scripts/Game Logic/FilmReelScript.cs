@@ -12,13 +12,18 @@ public class FilmReelScript : MonoBehaviour {
   	public float minGap, maxGap, filmReelCount;
     private Vector3 nextPosition;
     private Queue<Transform> objectQueue;
-   
+    private float coinCount, randX, randY, randZ, lineGap, randomCoins;
 	
 	
 	void Start(){
-		minGap = 20;
-		maxGap = 60;
-		
+		minGap = .5f;
+		maxGap = 1;
+		coinCount = 0;
+		randX = 0;
+		randY = 0;
+		randZ = 0;
+		randomCoins = 0;
+		lineGap = 0;
 	}
     // Use this for initialization
     void Awake()
@@ -32,7 +37,7 @@ public class FilmReelScript : MonoBehaviour {
             objectQueue.Enqueue((Transform)Instantiate(filmReel));
         }
         
-         nextPosition = new Vector3(Random.Range(-7,7),Random.Range(.02f,.80f), Random.Range(-20,-10));
+         nextPosition = new Vector3(Random.Range(-5,5),Random.Range(.02f,.80f), Random.Range(1,2));
 		for (int i = 0; i < numOfobjects; i++)
         {
             Recycle();
@@ -50,13 +55,28 @@ public class FilmReelScript : MonoBehaviour {
     }
 
     private void Recycle()
-    {	float offset = Random.Range(minGap, maxGap);
-		
-        filmReels = objectQueue.Dequeue();
-        filmReels.parent = levelObejct;
-        filmReels.localPosition = new Vector3(Random.Range(-7,7),Random.Range(.02f,.80f), nextPosition.z);
-        nextPosition.z += offset;
+    {	
+		if(coinCount == randomCoins){
+		randZ = Random.Range(4,10);
+		randomCoins = Random.Range(10, 15);
+		coinCount = 0;
+		}
+       	filmReels = objectQueue.Dequeue();
         
+		
+		filmReels.parent = levelObejct;
+		if( coinCount == 0){
+			randX = Random.Range(-5,5);
+       		randY = Random.Range(.2f,.8f);
+			lineGap = Random.Range(5,10);
+			 filmReels.localPosition = new Vector3(randX,randY,nextPosition.z+ lineGap);
+		}
+		else{
+			randZ = 1;
+		}
+		 filmReels.localPosition = new Vector3(randX,randY,nextPosition.z);
+        nextPosition.z += randZ;;
+        coinCount++;
         objectQueue.Enqueue(filmReels);
 		
     }
