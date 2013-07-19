@@ -3,6 +3,8 @@ using System.Collections;
 
 public class PlayerMotor : MonoBehaviour
 {
+    Queue inputKeys = new Queue();
+    
 	private PlayerPhysics playerPhysics;
 	
 	private bool hasControl;
@@ -10,10 +12,13 @@ public class PlayerMotor : MonoBehaviour
 	public void GiveControl() { hasControl = true; }
 	public void RemoveControl() { hasControl = false; }
 //	public bool HasControl() { return hasControl; }
-	
+
 	// Use this for initialization
 	void Start ()
 	{
+        //inputKeys.Enqueue(Input.GetKey(KeyCode.RightArrow));
+        //inputKeys.Enqueue(Input.GetKey(KeyCode.LeftArrow));
+
 		playerPhysics = GetComponent<PlayerPhysics>();
 		
 		hasControl = true;
@@ -33,7 +38,7 @@ public class PlayerMotor : MonoBehaviour
 			{
 				playerPhysics.Slide();
 			}
-			playerPhysics.GetInput(Input.GetAxisRaw("Horizontal"));
+            playerPhysics.GetInput(Input.GetKey(KeyCode.RightArrow), Input.GetKey(KeyCode.LeftArrow));
 		}
 	}
 }

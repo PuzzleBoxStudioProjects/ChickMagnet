@@ -38,6 +38,8 @@ public class PlayerPhysics : MonoBehaviour
 
     public float currentSpeed;
 
+    private float moveDir = 0.0f;
+
     public GameState.gameStates currentState;
 
 	void Awake()
@@ -64,16 +66,6 @@ public class PlayerPhysics : MonoBehaviour
 	void Update ()
 	{
 		ResetSlide();
-		
-        //game is lost
-		if (GameState.instance.state == GameState.gameStates.caught)
-		{
-            //stop moving
-            moveVector.x = 0;
-            //take control from player
-            playerMotor.RemoveControl();
-		}
-        
         CheckGround();
 		HazardControl();
         ProcessMotion();
@@ -108,14 +100,35 @@ public class PlayerPhysics : MonoBehaviour
 
 	void ProcessMotion()
 	{
+        //game is lost
+        if (GameState.instance.state == GameState.gameStates.caught)
+        {
+            //stop moving
+            moveVector.x = 0;
+            //take control from player
+            playerMotor.RemoveControl();
+        }
+
 		//move left right
-		moveVector = new Vector3(moveVector.x, vertVel, currentSpeed);
-		rigidbody.velocity = moveVector;
+        moveVector = new Vector3(moveVector.x, vertVel, currentSpeed);
+        rigidbody.velocity = moveVector;
 	}
 
-    public void GetInput(float dir)
+    public void GetInput(bool dirR, bool dirL)
     {
-        moveVector.x = playerSpeed * dir;
+        if (dirL && !dirR)
+        {
+            moveDir = -1;
+        }
+        if (dirR && !dirL)
+        {
+            moveDir = 1;
+        }
+        if (!dirL && !dirR)
+        {
+            moveDir = 0;
+        }
+        moveVector.x = playerSpeed * moveDir;
     }
 
 	public void Jump()
