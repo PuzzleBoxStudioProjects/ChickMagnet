@@ -9,8 +9,8 @@ public class GameState : MonoBehaviour
 	
 	public int hazardHitCnt = 0;
 	public float highScore = 0;
-	public Transform levelPrefab;
 	public GUISkin thisSkin;
+
 	//list of game states
 	public enum gameStates
 	{

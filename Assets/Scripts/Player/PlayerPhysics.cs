@@ -15,7 +15,7 @@ public class PlayerPhysics : MonoBehaviour
 
 	public float colliderScale = 0.5f;
 
-    [HideInInspector]
+    //[HideInInspector]
 	public bool isGrounded;
 	[HideInInspector]
 	public bool isSliding;
@@ -39,7 +39,7 @@ public class PlayerPhysics : MonoBehaviour
     public float currentSpeed;
 
     private float moveDir = 0.0f;
-
+    public float frontDist = 0.5f;
     public GameState.gameStates currentState;
 
 	void Awake()
@@ -68,6 +68,7 @@ public class PlayerPhysics : MonoBehaviour
 		ResetSlide();
         CheckGround();
 		HazardControl();
+        CheckHazard();
         ProcessMotion();
 		ApplyGravity();
         SpeedControl();
@@ -133,11 +134,10 @@ public class PlayerPhysics : MonoBehaviour
 
 	public void Jump()
 	{
-		//apply jump force
-		vertVel = jumpForce * Time.fixedDeltaTime;
-
-		//cancel sliding
+        //cancel sliding
 		isSliding = false;
+		//apply jump force
+		vertVel = jumpForce * Time.fixedDeltaTime;		
 	}
 	
 	public void Slide()
@@ -166,7 +166,7 @@ public class PlayerPhysics : MonoBehaviour
 		
 		//wait a time before resetting size
 		StartCoroutine("WaitAndSlide", 2);
-		
+
 		isSliding = true;
 	}
 	
@@ -217,16 +217,39 @@ public class PlayerPhysics : MonoBehaviour
         return levelSpeed;
     }
 
-	void HazardControl()
-	{
+    void HazardControl()
+    {
         //hit a hazard so add one
-		if (hasHitHazard)
-		{
-			GameState.instance.hazardHitCnt++;
+        if (hasHitHazard)
+        {
+            GameState.instance.hazardHitCnt++;
             hasHitHazard = false;
-		}
-	}
-	
+        }
+    }
+
+    void CheckHazard()
+    {
+        RaycastHit hitInfo;
+
+        float radiusCheck = collider.bounds.size.y;
+
+        Vector3 dir = transform.forward;
+
+        //hitting something below
+        if (Physics.SphereCast(transform.position + transform.up * 1.4f, radiusCheck, dir, out hitInfo, frontDist))
+        {
+            //instant kill
+            if (hitInfo.transform.tag == "Instakill")
+            {
+                GameState.instance.hazardHitCnt = 2;
+            }
+            else
+            {
+                hasHitHazard = true;
+            }
+        }
+    }
+    	
 	void ApplyGravity()
 	{
         //apply gravity
@@ -250,7 +273,7 @@ public class PlayerPhysics : MonoBehaviour
         Vector3 dir = Vector3.down;
 
         //hitting something below
-        if (Physics.SphereCast(transform.position, radiusCheck / 2, dir, out hitInfo, distBelowFeet))
+        if (Physics.SphereCast(transform.position, radiusCheck * 0.5f, dir, out hitInfo, distBelowFeet + radiusCheck * 0.5f))
         {
             isGrounded = true;
         }
@@ -285,18 +308,18 @@ public class PlayerPhysics : MonoBehaviour
                 hasHitHazard = true;
             }
 		}
-        //has hit in front
-        if (checkFront > 100)
-        {
-            //instant kill
-            if (col.transform.tag == "Instakill")
-            {
-                GameState.instance.hazardHitCnt = 2;
-            }
-            else
-            {
-                hasHitHazard = true;
-            }
-        }
+        ////has hit in front
+        //if (checkFront > 100)
+        //{
+        //    //instant kill
+        //    if (col.transform.tag == "Instakill")
+        //    {
+        //        GameState.instance.hazardHitCnt = 2;
+        //    }
+        //    else
+        //    {
+        //        hasHitHazard = true;
+        //    }
+        //}
 	}
 }

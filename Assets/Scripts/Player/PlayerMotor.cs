@@ -3,8 +3,6 @@ using System.Collections;
 
 public class PlayerMotor : MonoBehaviour
 {
-    Queue inputKeys = new Queue();
-    
 	private PlayerPhysics playerPhysics;
 	
 	private bool hasControl;
@@ -16,9 +14,6 @@ public class PlayerMotor : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-        //inputKeys.Enqueue(Input.GetKey(KeyCode.RightArrow));
-        //inputKeys.Enqueue(Input.GetKey(KeyCode.LeftArrow));
-
 		playerPhysics = GetComponent<PlayerPhysics>();
 		
 		hasControl = true;
