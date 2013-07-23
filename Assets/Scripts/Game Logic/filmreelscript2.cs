@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class FilmReelScript : MonoBehaviour {
-	public static FilmReelScript instance;
+public class filmreelscript2 : MonoBehaviour {
+	public static filmreelscript2 instance;
 	
 	public Transform player;
     public Transform filmReel;
-    public Transform levelObejct;
+    public Transform collectableObject;
 	private Transform filmReels;
     
 	public int numOfobjects;
@@ -24,10 +24,10 @@ public class FilmReelScript : MonoBehaviour {
 		minGap = .5f;
 		maxGap = 1;
 		coinCount = 0;
-		randX = 0;
+		randX = 3;
 		randY = 0;
-		randZ = 0;
-		randomCoins = 0;
+		randZ = 1;
+		randomCoins = 5;
 		lineGap = 0;
 		coolDown = 10;
 	}
@@ -44,7 +44,7 @@ public class FilmReelScript : MonoBehaviour {
             objectQueue.Enqueue((Transform)Instantiate(filmReel));
         }
         
-         nextPosition = new Vector3(Random.Range(-5,5),Random.Range(.02f,.80f), player.position.z + 50);
+        
 		for (int i = 0; i < numOfobjects; i++)
         {
             Recycle();
@@ -55,41 +55,39 @@ public class FilmReelScript : MonoBehaviour {
     // Update is called once per frame
     public void Update()
     {
-		if (objectQueue.Peek().localPosition.z  < player.position.z)
+		if (objectQueue.Peek().localPosition.z + recycleOffset < player.position.z)
         {
             Recycle();
         }
 		
     }
-
+	int RandomFriends(int min, int max){
+		return Random.Range (min,max);		
+	}
+	
     private void Recycle()
     {	
+		filmReels = objectQueue.Dequeue();
+        filmReels.parent = collectableObject;
+		nextPosition.z = RandomFriends((int)minGap,(int)maxGap);
+		
 		if(coinCount == randomCoins){
-		randomCoins = Random.Range(5, 15);
-		coinCount = 0;
+			filmReels.localPosition = new Vector3(RandomFriends(-5,5), 1, nextPosition.z);
+			randomCoins = RandomFriends(5,15);
+			coinCount = 0;
+			objectQueue.Enqueue(filmReels);
+			
 		}
-	
-       	filmReels = objectQueue.Dequeue();
-        filmReels.parent = levelObejct;
+		else {
+			coinCount++;
+			filmReels.localPosition = new Vector3(RandomFriends(-5,5), 1, nextPosition.z +=1);
+			objectQueue.Enqueue(filmReels);
+		}
 		
 		
-		if( coinCount == 0){
-			randX = Random.Range(-5,5);
-       		randY = Random.Range(.2f,.8f);
-			lineGap = Random.Range(80,120);
-			randZ = Random.Range(25,50);
-			filmReels.localPosition = new Vector3(randX,randY,randZ);
-			randZ = 1;
-			nextPosition.z += randZ;;
-	        coinCount++;
-    	    objectQueue.Enqueue(filmReels);
-	
-		}
-		else{
-		filmReels.localPosition = new Vector3(randX,randY,nextPosition.z );
-        nextPosition.z += randZ;;
-        coinCount++;
-        objectQueue.Enqueue(filmReels);
-		}
-    }
+		
+		
+		
+
+   }
 }
