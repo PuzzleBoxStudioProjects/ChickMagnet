@@ -5,10 +5,15 @@ public class DrewFilmReels : MonoBehaviour {
 
     public Transform player;
     public Transform filmReel;
-    public Transform levelObejct;
-    private Transform filmReels;
+    
 
-    public int numOfobjects;
+    private Transform filmReels;
+    public List<GameObject> filmReelParent;
+    private GameObject tempParent;
+
+    private int numOfReels;
+    public int parentIndex = 0;
+    public int numOfObjects = 3;
 
     public float recycleOffset;
     public float minGap, maxGap, filmReelCount;
@@ -16,8 +21,40 @@ public class DrewFilmReels : MonoBehaviour {
     private Vector3 nextPosition;
 
     private Queue<Transform> objectQueue;
-    private float coinCount, randX, randY, randZ, lineGap, coolDown, randomCoins;
+    public float coinCount, randX, randY, randZ, lineGap, coolDown, randomCoins;
 
+
+    
+    // Use this for initialization
+    void Awake()
+    {
+        //instance = this;
+        // creates a new queue big as num of objects
+        //if (coolDown == 0)
+        //{
+            objectQueue = new Queue<Transform>(numOfObjects);
+            
+            //nextPosition = new Vector3(Random.Range(-5, 5), Random.Range(.02f, .80f), Random.Range(10, 16));
+
+            for (int i = 0; i < numOfObjects; i++)
+            {
+                objectQueue.Enqueue((Transform)filmReel);
+                Recycle();
+                //parentIndex++;
+                //filmReelParent.Add(new GameObject("film reel parent"));
+                //print(objectQueue);
+            }
+    
+            // fills up the queue with the prefabs.
+          
+            //filmReelParent[parentIndex] = tempParent;
+        //}
+        //else
+        //{
+
+        //    coolDown -= Time.deltaTime;
+        //}
+    }
 
     void Start()
     {
@@ -31,35 +68,9 @@ public class DrewFilmReels : MonoBehaviour {
         lineGap = 0;
         coolDown = 10;
     }
-    // Use this for initialization
-    void Awake()
-    {
-        //instance = this;
-        // creates a new queue big as num of objects
-        if (coolDown == 0)
-        {
-            objectQueue = new Queue<Transform>(numOfobjects);
-            // fills up the queue with the prefabs.
-            for (int i = 0; i < numOfobjects; i++)
-            {
-                objectQueue.Enqueue((Transform)Instantiate(filmReel));
-            }
-
-            nextPosition = new Vector3(Random.Range(-5, 5), Random.Range(.02f, .80f), Random.Range(10, 16));
-            for (int i = 0; i < numOfobjects; i++)
-            {
-                Recycle();
-            }
-        }
-        else
-        {
-
-            coolDown -= Time.deltaTime;
-        }
-    }
 
     // Update is called once per frame
-    public void Update()
+    void Update()
     {
         if (objectQueue.Peek().localPosition.z + recycleOffset < player.position.z)
         {
@@ -70,35 +81,38 @@ public class DrewFilmReels : MonoBehaviour {
 
     private void Recycle()
     {
-        if (coinCount == randomCoins)
-        {
-            randomCoins = Random.Range(10, 15);
-            coinCount = 0;
-        }
+        //coinCount++;
+        //if (coinCount == randomCoins)
+        //{
+        //    randomCoins = Random.Range(10, 15);
+        //    coinCount = 0;
+        //}
 
-        filmReels = objectQueue.Dequeue();
-        filmReels.parent = levelObejct;
+        //else
+        //{
+        Transform reel = objectQueue.Dequeue();
+        
+        randX = Random.Range(-5, 5);
+        randY = Random.Range(.2f, .8f);
+        //    lineGap = Random.Range(20, 40);
+        randZ = Random.Range(10, 20);
+        //filmReels.localPosition = new Vector3(randX, randY, randZ);
+        //    randZ = 1;
+        //    nextPosition.z += randZ;
+        //    coinCount++;
+        //    objectQueue.Enqueue(filmReels);
 
+        //}
+        //else
+        //{
+        //nextPosition.z += randZ;
+        //filmReels.localPosition = new Vector3(randX, randY, nextPosition.z);
 
-        if (coinCount == 0)
-        {
-            randX = Random.Range(-5, 5);
-            randY = Random.Range(.2f, .8f);
-            lineGap = Random.Range(20, 40);
-            randZ = Random.Range(10, 16);
-            filmReels.localPosition = new Vector3(randX, randY, randZ);
-            randZ = 1;
-            nextPosition.z += randZ;
-            coinCount++;
-            objectQueue.Enqueue(filmReels);
-
-        }
-        else
-        {
-            filmReels.localPosition = new Vector3(randX, randY, nextPosition.z);
-            nextPosition.z += randZ;
-            coinCount++;
-            objectQueue.Enqueue(filmReels);
-        }
+        reel.localPosition = nextPosition;
+        nextPosition += new Vector3(randX, randY, randZ);
+          
+          
+            objectQueue.Enqueue(reel);
+        //}
     }
 }
