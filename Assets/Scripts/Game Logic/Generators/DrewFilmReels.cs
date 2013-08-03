@@ -20,6 +20,7 @@ public class DrewFilmReels : MonoBehaviour
     private Queue<Transform> objectQueue;
     private float coinCount, randX, randY, randZ, lineGap, coolDown, randomCoins;
 
+    private FameBar fameBar;
 
     void Start()
     {
@@ -64,7 +65,7 @@ public class DrewFilmReels : MonoBehaviour
 
     }
 
-    private void Recycle()
+    public void Recycle()
     {
         if (coinCount == randomCoins)
         {

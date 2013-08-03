@@ -8,21 +8,14 @@ public class FameBar : MonoBehaviour
      * until reaching zero
      * 1:30 ratio.  every 30 increment a girl goes away
      * */
-
-    public static FameBar instance;
-
+    
+    public bool hasCollected = false;
+    
     [HideInInspector]
     public int reelCount = 0;
 
     private int maxReelCount = 180;
-
-    private bool hasCollected = false;
-
-    void Awake()
-    {
-        instance = this;
-    }
-
+        
 	// Update is called once per frame
 	void Update ()
     {
@@ -57,6 +50,7 @@ public class FameBar : MonoBehaviour
         if (col.transform.tag == "filmReels")
         {
             hasCollected = true;
+            DrewFilmReels.instance.Recycle();
         }
     }
 }

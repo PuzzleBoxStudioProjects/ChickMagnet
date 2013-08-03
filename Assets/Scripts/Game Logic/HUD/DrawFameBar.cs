@@ -17,6 +17,7 @@ public class DrawFameBar : MonoBehaviour
 
     void Awake()
     {
+        //get the fame bar script on the player
         fameBar = player.GetComponent<FameBar>();
     }
     	
@@ -28,13 +29,17 @@ public class DrawFameBar : MonoBehaviour
 
     void AdjustFameBar()
     {
+        //apply the length of the bar
         fameBarLength = (Screen.width / 2) * (fameBar.reelCount / (float)maxBarLength);
     }
 
     void OnGUI()
     {
+        //TEMPORARY: create green text
         style.normal.textColor = Color.green;
+        //TEMPORARY: create a background texture
         style.normal.background = texture as Texture2D;
+        //draw the box
         GUI.Box(new Rect(10, 60, fameBarLength, 20), "Fame: " + fameBar.reelCount, style);
     }
 }
