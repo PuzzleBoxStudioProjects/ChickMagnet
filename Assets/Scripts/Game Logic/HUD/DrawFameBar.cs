@@ -20,7 +20,12 @@ public class DrawFameBar : MonoBehaviour
         //get the fame bar script on the player
         fameBar = player.GetComponent<FameBar>();
     }
-    	
+
+    void Start()
+    {
+        fameBarLength = Screen.width / 2;
+    }
+
 	// Update is called once per frame
 	void Update ()
     {
@@ -29,6 +34,11 @@ public class DrawFameBar : MonoBehaviour
 
     void AdjustFameBar()
     {
+        if (fameBar.reelCount > maxBarLength)
+        {
+            fameBar.reelCount = maxBarLength;
+        }
+
         //apply the length of the bar
         fameBarLength = (Screen.width / 2) * (fameBar.reelCount / (float)maxBarLength);
     }
